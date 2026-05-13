@@ -232,6 +232,18 @@ ul {
     margin-bottom: 30px;
 }
 
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
 .stat-card {
     background: var(--bg-card);
     padding: 20px;

@@ -39,22 +39,24 @@
                         <li class="nav-item active" data-section="dashboard"><a href="#"><i class="fa-solid fa-house"></i> beranda</a></li>
                         <li class="nav-item" data-section="files"><a href="#"><i class="fa-solid fa-folder-closed"></i> file manager</a></li>
                         <li class="nav-item" data-section="upload"><a href="#"><i class="fa-solid fa-cloud-arrow-up"></i> upload dokumen</a></li>
+                        <li class="nav-item" data-section="review"><a href="#"><i class="fa-solid fa-clipboard-check"></i> review dokumen</a></li>
                         <li class="nav-item" data-section="audit"><a href="#"><i class="fa-solid fa-shield-halved"></i> data audit</a></li>
                     </ul>
                 </div>
 
                 <div class="menu-section">
-                    <h3>analitik & sistem</h3>
+                    <h3>master data</h3>
                     <ul>
-                        <li class="nav-item" data-section="analytics"><a href="#"><i class="fa-solid fa-chart-line"></i> statistik</a></li>
-                        <li class="nav-item" data-section="settings"><a href="#"><i class="fa-solid fa-gear"></i> pengaturan</a></li>
+                        <li class="nav-item" data-section="categories"><a href="#"><i class="fa-solid fa-tags"></i> kategori</a></li>
+                        <li class="nav-item" data-section="departments"><a href="#"><i class="fa-solid fa-building-user"></i> departemen</a></li>
+                        <li class="nav-item" data-section="users"><a href="#"><i class="fa-solid fa-users"></i> pengguna</a></li>
                     </ul>
                 </div>
             </nav>
 
             <div class="sidebar-footer">
                 <ul>
-                    <li><a href="#"><i class="fa-solid fa-gear"></i> pengaturan</a></li>
+                    <li class="nav-item" data-section="settings"><a href="#"><i class="fa-solid fa-gear"></i> pengaturan</a></li>
                     <li><a href="#" class="text-danger"><i class="fa-solid fa-arrow-right-from-bracket"></i> keluar</a></li>
                 </ul>
             </div>
@@ -188,6 +190,74 @@
                             <!-- Duplicate for demo -->
                         </ul>
                     </div>
+                </div>
+            </div>
+
+            <!-- Section: Review Dokumen -->
+            <div id="section-review" class="content-section">
+                <div class="page-header">
+                    <h1>review dokumen</h1>
+                </div>
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3>antrean review</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">belum ada dokumen yang memerlukan review saat ini.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section: Master Categories -->
+            <div id="section-categories" class="content-section">
+                <div class="page-header">
+                    <h1>master kategori</h1>
+                </div>
+                <div class="grid-3">
+                    <div class="stat-card">Finance</div>
+                    <div class="stat-card">Marketing</div>
+                    <div class="stat-card">HR</div>
+                    <div class="stat-card">Development</div>
+                    <div class="stat-card">Legal</div>
+                </div>
+            </div>
+
+            <!-- Section: Master Departments -->
+            <div id="section-departments" class="content-section">
+                <div class="page-header">
+                    <h1>master departemen</h1>
+                </div>
+                <div class="content-card">
+                    <ul>
+                        <li>IT Department</li>
+                        <li>Finance Department</li>
+                        <li>HR Department</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section: Master Users -->
+            <div id="section-users" class="content-section">
+                <div class="page-header">
+                    <h1>pengaturan pengguna</h1>
+                </div>
+                <div class="content-card">
+                    <table class="document-table">
+                        <thead>
+                            <tr>
+                                <th>nama</th>
+                                <th>role</th>
+                                <th>departemen</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>admin user</td>
+                                <td>system admin</td>
+                                <td>it department</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
