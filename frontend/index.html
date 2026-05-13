@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMS - Document Management System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon"><i class="fa-solid fa-folder-open"></i></div>
+                    <div class="logo-text">
+                        <h2>dms</h2>
+                        <p>document management system</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="user-profile">
+                <img src="https://ui-avatars.com/api/?name=Admin&background=b4a7d6&color=000" alt="User Avatar" class="avatar">
+                <div class="user-info">
+                    <h4>admin user</h4>
+                    <span class="role">system admin</span>
+                    <span class="dept">it department</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-menu">
+                <div class="menu-section">
+                    <h3>menu utama</h3>
+                    <ul>
+                        <li class="active" id="nav-dashboard"><a href="#"><i class="fa-solid fa-house"></i> beranda</a></li>
+                        <li><a href="#"><i class="fa-solid fa-folder-closed"></i> file manager</a></li>
+                        <li id="add-doc-nav"><a href="#"><i class="fa-solid fa-cloud-arrow-up"></i> upload dokumen</a></li>
+                        <li><a href="#"><i class="fa-solid fa-clipboard-check"></i> review dokumen</a></li>
+                        <li><a href="#"><i class="fa-solid fa-shield-halved"></i> data audit</a></li>
+                    </ul>
+                </div>
+
+                <div class="menu-section">
+                    <h3>master data</h3>
+                    <ul>
+                        <li><a href="#"><i class="fa-solid fa-tags"></i> kategori</a></li>
+                        <li><a href="#"><i class="fa-solid fa-building-user"></i> departemen</a></li>
+                        <li><a href="#"><i class="fa-solid fa-users"></i> pengguna</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <ul>
+                    <li><a href="#"><i class="fa-solid fa-gear"></i> pengaturan</a></li>
+                    <li><a href="#" class="text-danger"><i class="fa-solid fa-arrow-right-from-bracket"></i> keluar</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="topbar">
+                <div class="search-bar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="cari dokumen, kategori, audit...">
+                </div>
+                <div class="topbar-actions">
+                    <button class="icon-btn theme-toggle"><i class="fa-solid fa-moon"></i></button>
+                    <button class="icon-btn notification">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="badge">3</span>
+                    </button>
+                    <button class="icon-btn profile-btn">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=b4a7d6&color=000&size=32" alt="Profile">
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard View -->
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <h1>overview dashboard</h1>
+                    <div class="date-display" id="current-date">
+                        <i class="fa-regular fa-calendar"></i> memuat tanggal...
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-title">total dokumen</div>
+                        <div class="stat-value" id="stat-total">0</div>
+                        <div class="stat-desc text-success"><i class="fa-solid fa-arrow-up"></i> diperbarui</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">dokumen aktif</div>
+                        <div class="stat-value" id="stat-active">0</div>
+                        <div class="stat-desc text-muted">status tersedia</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">draft / review</div>
+                        <div class="stat-value" id="stat-draft">0</div>
+                        <div class="stat-desc text-muted">dalam proses</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">terarsipkan</div>
+                        <div class="stat-value" id="stat-archived">0</div>
+                        <div class="stat-desc text-muted">penyimpanan aman</div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>grafik pertumbuhan dokumen</h3>
+                            <select class="period-select">
+                                <option>bulan ini</option>
+                                <option>tahun ini</option>
+                            </select>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="growthChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>dokumen per kategori</h3>
+                        </div>
+                        <div class="card-body doughnut-container">
+                            <canvas id="categoryChart"></canvas>
+                            <div class="custom-legend" id="categoryLegend"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Document Table Section -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3>daftar dokumen</h3>
+                        <button class="btn-primary" id="addDocBtn"><i class="fa-solid fa-plus"></i> tambah dokumen</button>
+                    </div>
+                    <div class="card-body">
+                        <table class="document-table">
+                            <thead>
+                                <tr>
+                                    <th>nama dokumen</th>
+                                    <th>kategori</th>
+                                    <th>status</th>
+                                    <th>tanggal</th>
+                                    <th>aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="documentTableBody">
+                                <!-- Data dimuat via script.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Recent Activity Section -->
+                <div class="activity-section">
+                    <div class="card-header">
+                        <h3>aktivitas terakhir</h3>
+                        <a href="#" class="view-all">lihat semua</a>
+                    </div>
+                    <div class="card-body">
+                        <ul class="activity-list" id="activityList">
+                            <!-- Data dimuat via script.js -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- AI Assistant Floating Widget -->
+        <div class="ai-chat-widget" id="aiChatWidget">
+            <button class="chat-toggle" id="chatToggle">
+                <i class="fa-solid fa-robot"></i>
+                <span class="pulse"></span>
+            </button>
+            <div class="chat-window" id="chatWindow">
+                <div class="chat-header">
+                    <div class="header-info">
+                        <i class="fa-solid fa-robot"></i>
+                        <div>
+                            <h4>dms assistant</h4>
+                            <span class="status">online</span>
+                        </div>
+                    </div>
+                    <button class="close-chat" id="closeChat"><i class="fa-solid fa-minus"></i></button>
+                </div>
+                <div class="chat-body" id="chatBody">
+                    <div class="message ai">
+                        <div class="msg-content">
+                            halo! saya asisten ai 9router. ada yang bisa saya bantu terkait dokumen anda?
+                        </div>
+                        <span class="msg-time">sekarang</span>
+                    </div>
+                </div>
+                <div class="chat-footer">
+                    <input type="text" id="chatInput" placeholder="tanyakan sesuatu...">
+                    <button id="sendMessage"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
