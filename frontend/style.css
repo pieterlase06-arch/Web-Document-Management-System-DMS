@@ -162,6 +162,22 @@ ul {
     border-right: 8px solid var(--danger);
 }
 
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+}
+
+.sidebar-footer ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-footer ul li {
+    margin-bottom: 5px;
+}
+
 /* Main Content */
 .main-content {
     flex: 1;

@@ -48,8 +48,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.logout = () => {
         localStorage.removeItem('dms_user');
-        location.reload();
+        window.location.reload();
     };
+
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.logout();
+        });
+    }
 
     checkAuth();
 
