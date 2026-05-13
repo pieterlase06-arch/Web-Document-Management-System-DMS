@@ -3,13 +3,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- State & Charts ---
     let growthChart, categoryChart;
+    let allDocuments = []; // Local cache for filtering
+    let currentFilter = { text: '', type: 'all' };
 
     // --- Initialization ---
     initTheme();
     updateDate();
-    fetchStats();
-    fetchDocuments();
-    fetchActivities();
+    refreshData();
 
     // --- API Calls ---
 
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('stat-draft').textContent = data.draft;
             document.getElementById('stat-archived').textContent = data.archived;
 
-            initGrowthChart(); // Static for now as per backend seed
+            initGrowthChart(); // Static simulation for trend
             initCategoryChart(data.categories);
         } catch (err) {
             console.error('Error fetching stats:', err);
@@ -33,8 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchDocuments() {
         try {
             const res = await fetch(`${API_BASE}/documents`);
-            const docs = await res.json();
-            renderDocuments(docs);
+            allDocuments = await res.json();
+            applyFilters();
         } catch (err) {
             console.error('Error fetching documents:', err);
         }
@@ -50,11 +50,49 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Rendering ---
+    function refreshData() {
+        fetchStats();
+        fetchDocuments();
+        fetchActivities();
+    }
+
+    // --- Rendering & Filtering ---
+
+    function applyFilters() {
+        let filtered = allDocuments;
+
+        // Filter by sidebar selection
+        if (currentFilter.type !== 'all') {
+            if (currentFilter.type === 'Trash') {
+                filtered = filtered.filter(d => d.status === 'Archived');
+            } else if (currentFilter.type === 'Shared') {
+                filtered = filtered.filter(d => d.category === 'Marketing'); // Logic simulation
+            } else if (currentFilter.type === 'Storage') {
+                filtered = filtered.filter(d => d.status === 'Active');
+            }
+        }
+
+        // Filter by search text
+        if (currentFilter.text) {
+            const search = currentFilter.text.toLowerCase();
+            filtered = filtered.filter(d => 
+                d.title.toLowerCase().includes(search) || 
+                d.category.toLowerCase().includes(search)
+            );
+        }
+
+        renderDocuments(filtered);
+    }
 
     function renderDocuments(docs) {
         const tbody = document.getElementById('documentTableBody');
         tbody.innerHTML = '';
+        
+        if (docs.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 2rem;">tidak ada dokumen yang ditemukan.</td></tr>';
+            return;
+        }
+
         docs.forEach(doc => {
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -63,15 +101,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><span class="status-${doc.status.toLowerCase()}">${doc.status.toLowerCase()}</span></td>
                 <td>${new Date(doc.created_at).toLocaleDateString()}</td>
                 <td>
-                    <button class="icon-btn delete-btn" data-id="${doc.id}"><i class="fa-solid fa-trash"></i></button>
+                    <div class="action-group">
+                        <button class="icon-btn delete-btn" data-id="${doc.id}" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                        <button class="icon-btn" onclick="alert('fitur download segera hadir!')"><i class="fa-solid fa-download"></i></button>
+                    </div>
                 </td>
             `;
             tbody.appendChild(row);
         });
 
-        // Add event listeners for delete
+        // Event listener for delete
         document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.onclick = () => deleteDocument(btn.dataset.id);
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                deleteDocument(btn.dataset.id);
+            };
         });
     }
 
@@ -94,39 +138,71 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Actions ---
 
+    // Modal Add Document
+    const addModal = document.getElementById('addModal');
+    const addDocBtn = document.getElementById('addDocBtn');
+    const closeModal = document.getElementById('closeModal');
+    const addDocForm = document.getElementById('addDocForm');
+
+    addDocBtn.onclick = () => addModal.classList.add('active');
+    closeModal.onclick = () => addModal.classList.remove('active');
+    
+    // Close modal on background click
+    addModal.onclick = (e) => { if (e.target === addModal) addModal.classList.remove('active'); };
+
+    addDocForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const title = document.getElementById('docTitle').value;
+        const category = document.getElementById('docCategory').value;
+        const status = document.getElementById('docStatus').value;
+
+        try {
+            const res = await fetch(`${API_BASE}/documents`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, category, status })
+            });
+            if (res.ok) {
+                addDocForm.reset();
+                addModal.classList.remove('active');
+                refreshData();
+            }
+        } catch (err) {
+            console.error('Error adding document:', err);
+            alert('gagal menambah dokumen.');
+        }
+    };
+
     async function deleteDocument(id) {
         if (!confirm('apakah anda yakin ingin menghapus dokumen ini?')) return;
         try {
-            await fetch(`${API_BASE}/documents/${id}`, { method: 'DELETE' });
-            refreshData();
+            const res = await fetch(`${API_BASE}/documents/${id}`, { method: 'DELETE' });
+            if (res.ok) refreshData();
         } catch (err) {
             console.error('Error deleting document:', err);
         }
     }
 
-    document.getElementById('addDocBtn').onclick = async () => {
-        const title = prompt('masukkan judul dokumen:');
-        if (!title) return;
-        const category = prompt('masukkan kategori (finance, marketing, hr, development):', 'general');
-        const status = prompt('masukkan status (active, draft, archived):', 'active');
-
-        try {
-            await fetch(`${API_BASE}/documents`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, category, status })
-            });
-            refreshData();
-        } catch (err) {
-            console.error('Error adding document:', err);
-        }
+    // Search Filtering
+    const searchInput = document.querySelector('.search-bar input');
+    searchInput.oninput = (e) => {
+        currentFilter.text = e.target.value;
+        applyFilters();
     };
 
-    function refreshData() {
-        fetchStats();
-        fetchDocuments();
-        fetchActivities();
-    }
+    // Sidebar Navigation Filtering
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        item.onclick = (e) => {
+            e.preventDefault();
+            navItems.forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            
+            const label = item.querySelector('span').textContent;
+            currentFilter.type = label;
+            applyFilters();
+        };
+    });
 
     // --- Charts ---
 
@@ -149,7 +225,11 @@ document.addEventListener('DOMContentLoaded', () => {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } }
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { grid: { color: '#333' }, ticks: { color: '#888' } },
+                    x: { grid: { color: '#333' }, ticks: { color: '#888' } }
+                }
             }
         });
     }
@@ -181,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Legend
+        // Legend Rendering
         const legend = document.getElementById('categoryLegend');
         legend.innerHTML = '';
         categories.forEach((c, i) => {
@@ -222,19 +302,17 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const res = await fetch(`${API_BASE}/chat`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     messages: [{ role: 'user', content: text }]
                 })
             });
             const data = await res.json();
+            removeTypingIndicator(typingId);
             
             if (data.error) throw new Error(data.error);
 
-            removeTypingIndicator(typingId);
-            const reply = data.choices ? data.choices[0].message.content : 'maaf, saya sedang sibuk.';
+            const reply = data.choices ? data.choices[0].message.content : 'maaf, saya sedang tidak aktif.';
             addChatMessage(reply.toLowerCase(), 'ai');
         } catch (err) {
             removeTypingIndicator(typingId);
@@ -269,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (el) el.remove();
     }
 
-    // --- Helpers ---
+    // --- Global Helpers ---
 
     function initTheme() {
         const themeBtn = document.querySelector('.theme-toggle');

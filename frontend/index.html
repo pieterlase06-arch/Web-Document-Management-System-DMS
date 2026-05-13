@@ -212,6 +212,43 @@
         </div>
     </div>
 
+    <!-- Modal Tambah Dokumen -->
+    <div id="addModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="brutalist-text">add_new_document</h3>
+                <button id="closeModal" class="close-btn">&times;</button>
+            </div>
+            <form id="addDocForm" class="modal-form">
+                <div class="form-group">
+                    <label>document_title</label>
+                    <input type="text" id="docTitle" placeholder="nama dokumen..." required>
+                </div>
+                <div class="form-group">
+                    <label>category</label>
+                    <select id="docCategory">
+                        <option value="Finance">Finance</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="HR">HR</option>
+                        <option value="Development">Development</option>
+                        <option value="Legal">Legal</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>status</label>
+                    <select id="docStatus">
+                        <option value="Active">Active</option>
+                        <option value="Draft">Draft</option>
+                        <option value="Archived">Archived</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">save_document</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
