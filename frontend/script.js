@@ -9,7 +9,54 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Initialization ---
     initTheme();
     updateDate();
+    initNavigation();
     refreshData();
+
+    // --- Navigation Logic ---
+    function initNavigation() {
+        const navItems = document.querySelectorAll('.nav-item');
+        const sections = document.querySelectorAll('.content-section');
+
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const sectionId = item.getAttribute('data-section');
+                
+                // Update active menu
+                navItems.forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
+
+                // Special Case: Upload
+                if (sectionId === 'upload') {
+                    const addModal = document.getElementById('addModal');
+                    addModal.style.display = 'flex';
+                    return; // Don't switch section
+                }
+
+                // Switch section
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                    if (section.id === `section-${sectionId}`) {
+                        section.classList.add('active');
+                    }
+                });
+
+                // If moving to files, refresh data
+                if (sectionId === 'files' || sectionId === 'dashboard') {
+                    refreshData();
+                }
+            });
+        });
+
+        // Handle "Tambah Dokumen" button from File Manager section
+        const addDocBtnFiles = document.getElementById('addDocBtnFiles');
+        if (addDocBtnFiles) {
+            addDocBtnFiles.onclick = () => {
+                const addModal = document.getElementById('addModal');
+                addModal.style.display = 'flex';
+            };
+        }
+    }
 
     // --- API Calls ---
 
@@ -45,6 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(`${API_BASE}/activities`);
             const activities = await res.json();
             renderActivities(activities);
+            renderAudit(activities); // Use same data for audit section
         } catch (err) {
             console.error('Error fetching activities:', err);
         }
@@ -183,26 +231,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Search Filtering
+    // --- Global Search ---
     const searchInput = document.querySelector('.search-bar input');
-    searchInput.oninput = (e) => {
-        currentFilter.text = e.target.value;
-        applyFilters();
-    };
-
-    // Sidebar Navigation Filtering
-    const navItems = document.querySelectorAll('.nav-item');
-    navItems.forEach(item => {
-        item.onclick = (e) => {
-            e.preventDefault();
-            navItems.forEach(i => i.classList.remove('active'));
-            item.classList.add('active');
-            
-            const label = item.querySelector('span').textContent;
-            currentFilter.type = label;
+    if (searchInput) {
+        searchInput.oninput = (e) => {
+            currentFilter.text = e.target.value;
             applyFilters();
         };
-    });
+    }
+
+    // --- Rendering & Filtering Helpers ---
+
+    function renderAudit(activities) {
+        const auditList = document.getElementById('auditList');
+        if (!auditList) return;
+        auditList.innerHTML = '';
+        
+        activities.forEach(act => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <div class="activity-icon audit"><i class="fa-solid fa-fingerprint"></i></div>
+                <div class="activity-details">
+                    <p><strong>${act.user}</strong> ${act.action.toLowerCase()}: <em>${act.details.toLowerCase()}</em></p>
+                    <span>${new Date(act.timestamp).toLocaleString('id-ID').toLowerCase()}</span>
+                </div>
+            `;
+            auditList.appendChild(li);
+        });
+    }
 
     // --- Charts ---
 

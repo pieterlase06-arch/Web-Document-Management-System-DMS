@@ -495,3 +495,26 @@ ul {
     font-size: 1.5rem;
     cursor: pointer;
 }
+
+/* --- Content Sections (SPA) --- */
+.content-section {
+    display: none;
+    animation: sectionFadeIn 0.3s ease-out;
+}
+
+.content-section.active {
+    display: block;
+}
+
+@keyframes sectionFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
