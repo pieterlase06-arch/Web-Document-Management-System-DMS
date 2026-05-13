@@ -1,3 +1,12 @@
+---
+title: DMS App
+emoji: 📁
+colorFrom: purple
+colorTo: indigo
+sdk: docker
+pinned: false
+---
+
 # 📁 DMS - Document Management System
 > **Modern Full-Stack Document Management with AI Integration & Soft Dark Brutalism Aesthetics**
 
