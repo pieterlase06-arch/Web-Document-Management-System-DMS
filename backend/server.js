@@ -13,7 +13,8 @@ app.use(express.json());
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
     try {
-        const user = db.prepare('SELECT * FROM users WHERE username = ? AND password = ?').get(username, password);
+        // Gunakan LOWER() untuk case-insensitive login
+        const user = db.prepare('SELECT * FROM users WHERE LOWER(username) = LOWER(?) AND password = ?').get(username, password);
         if (user) {
             res.json({ success: true, user: { id: user.id, username: user.username } });
         } else {

@@ -38,10 +38,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('dms_user', JSON.stringify(data.user));
                     checkAuth();
                 } else {
-                    alert(data.error);
+                    alert('Login Gagal: ' + (data.error || 'Username/Password salah'));
                 }
             } catch (err) {
-                alert('Gagal menghubungi server');
+                console.error('Login error:', err);
+                alert('Gagal menghubungi server. Pastikan koneksi internet aktif.');
             }
         };
     }
