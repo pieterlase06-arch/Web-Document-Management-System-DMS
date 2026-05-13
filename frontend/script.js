@@ -9,16 +9,54 @@ document.addEventListener('DOMContentLoaded', () => {
     const appContainer = document.getElementById('appContainer');
     const loginForm = document.getElementById('loginForm');
 
-    function checkAuth() {
-        const user = localStorage.getItem('dms_user');
-        if (user) {
-            if (loginScreen) loginScreen.style.display = 'none';
-            if (appContainer) appContainer.style.display = 'flex';
-            init(); // Start loading data
-        } else {
+    const checkAuth = () => {
+        const userStr = localStorage.getItem('dms_user');
+        if (!userStr) {
             if (loginScreen) loginScreen.style.display = 'flex';
             if (appContainer) appContainer.style.display = 'none';
+            return;
         }
+
+        const user = JSON.parse(userStr);
+        if (loginScreen) loginScreen.style.display = 'none';
+        if (appContainer) appContainer.style.display = 'flex';
+
+        // Update profile in sidebar
+        const userNameEl = document.querySelector('.sidebar-user h4');
+        const userRoleEl = document.querySelector('.sidebar-user .role');
+        const userDeptEl = document.querySelector('.sidebar-user .dept');
+        
+        if (userNameEl) userNameEl.textContent = user.name;
+        if (userRoleEl) userRoleEl.textContent = user.role;
+        // Kita belum punya nama departemen di user object, bisa ditambahkan nanti
+        
+        // RBAC: Show/Hide Admin menus
+        const adminElements = document.querySelectorAll('.admin-only');
+        const isAdmin = user.role && user.role.toLowerCase() === 'admin';
+        adminElements.forEach(el => {
+            el.style.display = isAdmin ? 'block' : 'none';
+        });
+
+        init();
+    }
+
+    const fetchActivities = async () => {
+        try {
+            const res = await fetch(`${API_BASE}/activities`);
+            const data = await res.json();
+            const container = document.getElementById('auditTableBody');
+            if (container) {
+                container.innerHTML = data.map(act => `
+                    <tr>
+                        <td><span class="badge ${act.type || 'info'}">${act.type || 'log'}</span></td>
+                        <td><strong>${act.user_name}</strong></td>
+                        <td>${act.action}</td>
+                        <td>${act.document_title || '-'}</td>
+                        <td>${new Date(act.timestamp).toLocaleString('id-ID')}</td>
+                    </tr>
+                `).join('') || '<tr><td colspan="5" style="text-align:center;">Belum ada aktivitas.</td></tr>';
+            }
+        } catch (err) { console.error('Error fetching activities:', err); }
     }
 
     if (loginForm) {
@@ -114,6 +152,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Trigger Data Fetching/Rendering
             if (sectionId === 'files' || sectionId === 'dashboard') {
                 refreshData();
+            } else if (sectionId === 'audit') {
+                fetchActivities();
             } else if (sectionId === 'review') {
                 renderReview();
             } else if (sectionId === 'categories') {
@@ -172,15 +212,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function fetchActivities() {
-        try {
-            const res = await fetch(`${API_BASE}/activities`);
-            const activities = await res.json();
-            renderActivities(activities);
-            renderAudit(activities); // Use same data for audit section
-        } catch (err) {
-            console.error('Error fetching activities:', err);
-        }
+    async function fetchActivitiesOld() {
+        // Redundant, using the consolidated one at the top
     }
 
     function refreshData() {

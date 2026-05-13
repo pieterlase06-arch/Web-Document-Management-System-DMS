@@ -61,17 +61,17 @@
                         <li class="nav-item" data-section="files"><a href="#"><i class="fa-solid fa-folder-closed"></i> file manager</a></li>
                         <li class="nav-item" data-section="upload"><a href="#"><i class="fa-solid fa-cloud-arrow-up"></i> upload dokumen</a></li>
                         <li class="nav-item" data-section="review"><a href="#"><i class="fa-solid fa-clipboard-check"></i> review dokumen</a></li>
-                        <li class="nav-item" data-section="audit"><a href="#"><i class="fa-solid fa-shield-halved"></i> data audit</a></li>
+                        <li class="nav-item admin-only" data-section="audit"><a href="#"><i class="fa-solid fa-shield-halved"></i> data audit</a></li>
                     </ul>
                 </div>
 
-                <div class="menu-section">
+                <div class="menu-section admin-only">
                     <h3>master data</h3>
                     <ul>
                         <li class="nav-item" data-section="categories"><a href="#"><i class="fa-solid fa-tags"></i> kategori</a></li>
-                <li class="nav-item" data-section="departments"><a href="#"><i class="fa-solid fa-building-user"></i> departemen</a></li>
-                <li class="nav-item" data-section="users"><a href="#"><i class="fa-solid fa-users"></i> pengguna</a></li>
-            </ul>
+                        <li class="nav-item" data-section="departments"><a href="#"><i class="fa-solid fa-building-user"></i> departemen</a></li>
+                        <li class="nav-item" data-section="users"><a href="#"><i class="fa-solid fa-users"></i> pengguna</a></li>
+                    </ul>
                 </div>
             </nav>
 
@@ -203,14 +203,20 @@
                 <div class="page-header">
                     <h1>data audit & security</h1>
                 </div>
-                <div class="grid-2">
-                    <div class="content-card">
-                        <h3>riwayat audit</h3>
-                        <p class="text-muted">menampilkan jejak audit sistem keamanan.</p>
-                        <ul class="activity-list" id="auditList">
-                            <!-- Duplicate for demo -->
-                        </ul>
-                    </div>
+                <div class="content-card">
+                    <h3>riwayat audit</h3>
+                    <table class="document-table">
+                        <thead>
+                            <tr>
+                                <th>tipe</th>
+                                <th>pengguna</th>
+                                <th>aktivitas</th>
+                                <th>dokumen</th>
+                                <th>waktu</th>
+                            </tr>
+                        </thead>
+                        <tbody id="auditTableBody"></tbody>
+                    </table>
                 </div>
             </div>
 
