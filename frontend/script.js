@@ -44,6 +44,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 // If moving to files, refresh data
                 if (sectionId === 'files' || sectionId === 'dashboard') {
                     refreshData();
+                } else if (sectionId === 'review') {
+                    renderReview();
+                } else if (sectionId === 'categories') {
+                    fetchCategories();
+                } else if (sectionId === 'departments') {
+                    fetchDepartments();
+                } else if (sectionId === 'users') {
+                    fetchUsers();
                 }
             });
         });
@@ -102,6 +110,14 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchStats();
         fetchDocuments();
         fetchActivities();
+        // Background update for others if they are visible
+        const activeSection = document.querySelector('.content-section.active');
+        if (activeSection) {
+            if (activeSection.id === 'section-review') renderReview();
+            if (activeSection.id === 'section-categories') fetchCategories();
+            if (activeSection.id === 'section-departments') fetchDepartments();
+            if (activeSection.id === 'section-users') fetchUsers();
+        }
     }
 
     // --- Rendering & Filtering ---
@@ -240,7 +256,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // --- Rendering & Filtering Helpers ---
 
     function renderAudit(activities) {
         const auditList = document.getElementById('auditList');
@@ -252,11 +267,104 @@ document.addEventListener('DOMContentLoaded', () => {
             li.innerHTML = `
                 <div class="activity-icon audit"><i class="fa-solid fa-fingerprint"></i></div>
                 <div class="activity-details">
-                    <p><strong>${act.user}</strong> ${act.action.toLowerCase()}: <em>${act.details.toLowerCase()}</em></p>
+                    <p><strong>${act.user_name}</strong> ${act.action.toLowerCase()}: <em>${act.document_title.toLowerCase()}</em></p>
                     <span>${new Date(act.timestamp).toLocaleString('id-ID').toLowerCase()}</span>
                 </div>
             `;
             auditList.appendChild(li);
+        });
+    }
+
+    function renderReview() {
+        const reviewTbody = document.getElementById('reviewTableBody');
+        if (!reviewTbody) return;
+        
+        const reviewDocs = allDocuments.filter(d => d.status === 'Draft');
+        reviewTbody.innerHTML = '';
+        
+        if (reviewDocs.length === 0) {
+            reviewTbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 2rem;">tidak ada dokumen dalam antrean review.</td></tr>';
+            return;
+        }
+
+        reviewDocs.forEach(doc => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><strong>${doc.title.toLowerCase()}</strong></td>
+                <td><span class="badge-tag">${doc.category.toLowerCase()}</span></td>
+                <td>${new Date(doc.created_at).toLocaleDateString()}</td>
+                <td>
+                    <div class="action-group">
+                        <button class="btn-primary btn-sm" onclick="alert('fitur approve segera hadir!')">approve</button>
+                        <button class="btn-danger btn-sm" onclick="alert('fitur reject segera hadir!')">reject</button>
+                    </div>
+                </td>
+            `;
+            reviewTbody.appendChild(row);
+        });
+    }
+
+    async function fetchCategories() {
+        try {
+            const res = await fetch(`${API_BASE}/categories`);
+            const data = await res.json();
+            renderCategories(data);
+        } catch (err) { console.error(err); }
+    }
+
+    function renderCategories(cats) {
+        const container = document.getElementById('categoriesGrid');
+        if (!container) return;
+        container.innerHTML = '';
+        cats.forEach(c => {
+            const card = document.createElement('div');
+            card.className = 'stat-card';
+            card.innerHTML = `<div class="stat-title">kategori</div><div class="stat-value" style="font-size: 20px;">${c.name.toLowerCase()}</div>`;
+            container.appendChild(card);
+        });
+    }
+
+    async function fetchDepartments() {
+        try {
+            const res = await fetch(`${API_BASE}/departments`);
+            const data = await res.json();
+            renderDepartments(data);
+        } catch (err) { console.error(err); }
+    }
+
+    function renderDepartments(depts) {
+        const container = document.getElementById('departmentsList');
+        if (!container) return;
+        container.innerHTML = '';
+        depts.forEach(d => {
+            const li = document.createElement('div');
+            li.className = 'content-card';
+            li.style.marginBottom = '10px';
+            li.innerHTML = `<strong>${d.name.toLowerCase()}</strong>`;
+            container.appendChild(li);
+        });
+    }
+
+    async function fetchUsers() {
+        try {
+            const res = await fetch(`${API_BASE}/users`);
+            const data = await res.json();
+            renderUsers(data);
+        } catch (err) { console.error(err); }
+    }
+
+    function renderUsers(users) {
+        const tbody = document.getElementById('usersTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        users.forEach(u => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><strong>${u.name.toLowerCase()}</strong></td>
+                <td>${u.role.toLowerCase()}</td>
+                <td>${u.department_name ? u.department_name.toLowerCase() : '-'}</td>
+            `;
+            tbody.appendChild(row);
         });
     }
 

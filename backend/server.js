@@ -123,6 +123,38 @@ app.post('/api/chat', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'Gagal menghubungi 9Router: ' + err.message });
   }
+
+// --- Master Data Endpoints ---
+
+app.get('/api/categories', (req, res) => {
+    try {
+        const rows = db.prepare('SELECT * FROM categories').all();
+        res.json(rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/departments', (req, res) => {
+    try {
+        const rows = db.prepare('SELECT * FROM departments').all();
+        res.json(rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/users', (req, res) => {
+    try {
+        const rows = db.prepare(`
+            SELECT u.*, d.name as department_name 
+            FROM users u 
+            LEFT JOIN departments d ON u.department_id = d.id
+        `).all();
+        res.json(rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 app.listen(PORT, '0.0.0.0', () => {

@@ -203,7 +203,17 @@
                         <h3>antrean review</h3>
                     </div>
                     <div class="card-body">
-                        <p class="text-muted">belum ada dokumen yang memerlukan review saat ini.</p>
+                        <table class="document-table">
+                            <thead>
+                                <tr>
+                                    <th>nama dokumen</th>
+                                    <th>kategori</th>
+                                    <th>tanggal</th>
+                                    <th>aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reviewTableBody"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -213,12 +223,8 @@
                 <div class="page-header">
                     <h1>master kategori</h1>
                 </div>
-                <div class="grid-3">
-                    <div class="stat-card">Finance</div>
-                    <div class="stat-card">Marketing</div>
-                    <div class="stat-card">HR</div>
-                    <div class="stat-card">Development</div>
-                    <div class="stat-card">Legal</div>
+                <div class="grid-3" id="categoriesGrid">
+                    <!-- Data dimuat via script.js -->
                 </div>
             </div>
 
@@ -227,12 +233,8 @@
                 <div class="page-header">
                     <h1>master departemen</h1>
                 </div>
-                <div class="content-card">
-                    <ul>
-                        <li>IT Department</li>
-                        <li>Finance Department</li>
-                        <li>HR Department</li>
-                    </ul>
+                <div id="departmentsList">
+                    <!-- Data dimuat via script.js -->
                 </div>
             </div>
 
@@ -250,13 +252,7 @@
                                 <th>departemen</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>admin user</td>
-                                <td>system admin</td>
-                                <td>it department</td>
-                            </tr>
-                        </tbody>
+                        <tbody id="usersTableBody"></tbody>
                     </table>
                 </div>
             </div>
