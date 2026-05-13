@@ -1,12 +1,16 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const db = require('./database');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 7860; // Port default Hugging Face adalah 7860
 
 app.use(cors());
 app.use(express.json());
+
+// Melayani file statis dari folder frontend
+app.use(express.static(path.join(__dirname, '../frontend')));
 
 // GET /api/stats : Menghitung total dokumen, dokumen aktif, dll.
 app.get('/api/stats', (req, res) => {
