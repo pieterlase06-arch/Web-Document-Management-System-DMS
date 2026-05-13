@@ -47,13 +47,13 @@ body {
     background-color: var(--bg-dark);
     color: var(--text-primary);
     overflow-x: hidden;
-    text-transform: lowercase;
+    text-transform: capitalize;
     font-size: 13.5px; /* Smaller base font */
     line-height: 1.4;
 }
 
 h1, h2, h3, h4, .stat-value {
-    text-transform: lowercase;
+    text-transform: capitalize;
 }
 
 a {
