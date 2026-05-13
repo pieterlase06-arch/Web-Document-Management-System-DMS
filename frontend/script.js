@@ -14,54 +14,62 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Navigation Logic ---
     function initNavigation() {
-        const navItems = document.querySelectorAll('.nav-item');
-        const sections = document.querySelectorAll('.content-section');
+        const sidebar = document.querySelector('.sidebar');
+        if (!sidebar) return;
 
-        navItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                const sectionId = item.getAttribute('data-section');
-                
-                // Update active menu
-                navItems.forEach(nav => nav.classList.remove('active'));
-                item.classList.add('active');
+        sidebar.addEventListener('click', (e) => {
+            const item = e.target.closest('.nav-item');
+            if (!item) return;
 
-                // Special Case: Upload
-                if (sectionId === 'upload') {
-                    const addModal = document.getElementById('addModal');
-                    addModal.style.display = 'flex';
-                    return; // Don't switch section
-                }
+            e.preventDefault();
+            e.stopPropagation();
 
-                // Switch section
-                sections.forEach(section => {
-                    section.classList.remove('active');
-                    if (section.id === `section-${sectionId}`) {
-                        section.classList.add('active');
-                    }
-                });
+            const sectionId = item.getAttribute('data-section');
+            if (!sectionId) return;
 
-                // If moving to files, refresh data
-                if (sectionId === 'files' || sectionId === 'dashboard') {
-                    refreshData();
-                } else if (sectionId === 'review') {
-                    renderReview();
-                } else if (sectionId === 'categories') {
-                    fetchCategories();
-                } else if (sectionId === 'departments') {
-                    fetchDepartments();
-                } else if (sectionId === 'users') {
-                    fetchUsers();
+            console.log('SPA Navigation Triggered:', sectionId);
+
+            // Special Case: Upload
+            if (sectionId === 'upload') {
+                const addModal = document.getElementById('addModal');
+                if (addModal) addModal.classList.add('active');
+                return;
+            }
+
+            // Update UI: Sidebar Active State
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            item.classList.add('active');
+
+            // Update UI: Content Section Visibility
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === `section-${sectionId}`) {
+                    section.classList.add('active');
                 }
             });
+
+            // Trigger Data Fetching/Rendering
+            if (sectionId === 'files' || sectionId === 'dashboard') {
+                refreshData();
+            } else if (sectionId === 'review') {
+                renderReview();
+            } else if (sectionId === 'categories') {
+                fetchCategories();
+            } else if (sectionId === 'departments') {
+                fetchDepartments();
+            } else if (sectionId === 'users') {
+                fetchUsers();
+            }
         });
 
-        // Handle "Tambah Dokumen" button from File Manager section
+        // "Tambah Dokumen" from File Manager section
         const addDocBtnFiles = document.getElementById('addDocBtnFiles');
         if (addDocBtnFiles) {
-            addDocBtnFiles.onclick = () => {
+            addDocBtnFiles.onclick = (e) => {
+                e.preventDefault();
                 const addModal = document.getElementById('addModal');
-                addModal.style.display = 'flex';
+                if (addModal) addModal.classList.add('active');
             };
         }
     }
