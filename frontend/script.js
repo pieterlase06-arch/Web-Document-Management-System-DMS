@@ -1,5 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_BASE = '/api';
+    // URL API dinamis: Jika di Vercel, arahkan ke Hugging Face. Jika lokal/HF, gunakan path relatif.
+    let API_BASE = '/api';
+    
+    if (window.location.hostname.includes('vercel.app')) {
+        // GANTI URL DI BAWAH INI dengan URL Space Hugging Face Anda
+        API_BASE = 'https://pieterlase06-arch-web-document-management-system-dms.hf.space/api';
+    }
 
     // --- State & Charts ---
     let growthChart, categoryChart;
