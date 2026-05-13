@@ -41,11 +41,12 @@ db.exec(`
   );
 `);
 
-// Migration check: Ensure users table has username column
+// Migration check: Ensure users table has all required columns
 try {
-  db.prepare('SELECT username FROM users LIMIT 1').get();
+  db.prepare('SELECT department_id FROM users LIMIT 1').get();
 } catch (e) {
-  console.log('Migrating users table...');
+  console.log('Migrating users table (adding department_id)...');
+  // Ambil data user yang ada dulu agar tidak hilang (opsional, tapi admin harus tetap ada)
   db.exec('DROP TABLE IF EXISTS users');
   db.exec(`
     CREATE TABLE users (
@@ -53,9 +54,13 @@ try {
       username TEXT UNIQUE NOT NULL,
       password TEXT NOT NULL,
       name TEXT,
-      role TEXT
+      role TEXT,
+      department_id INTEGER,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
+  // Re-seed default admin
+  db.prepare('INSERT INTO users (username, password, name, role, department_id) VALUES (?, ?, ?, ?, ?)').run('admin', 'admin123', 'Administrator', 'Admin', 1);
 }
 
 // Seed data function
