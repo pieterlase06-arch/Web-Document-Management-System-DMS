@@ -559,48 +559,21 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('') || '<tr><td colspan="2" style="text-align:center; padding:1rem;">belum ada departemen.</td></tr>';
     }
 
-    async function fetchUsers() {
-        try {
-            const res = await fetch(`${API_BASE}/users`);
-            const data = await res.json();
-            renderUsers(data);
-        } catch (err) { console.error('Error fetching users:', err); }
-    }
-
-    function renderUsers(data) {
-        const tbody = document.getElementById('usersTableBody');
-        if (!tbody) return;
-        tbody.innerHTML = data.map(user => `
-            <tr>
-                <td>${user.username}</td>
-                <td>${user.name.toLowerCase()}</td>
-                <td><span class="badge-tag">${user.role.toLowerCase()}</span></td>
-                <td>${(user.department_name || 'N/A').toLowerCase()}</td>
-                <td><button class="icon-btn delete-btn" onclick="deleteMasterData('users', ${user.id})"><i class="fa-solid fa-trash"></i></button></td>
-            </tr>
-        `).join('') || '<tr><td colspan="5" style="text-align:center; padding:1rem;">belum ada pengguna.</td></tr>';
-    }
-
     window.addMasterData = async (type) => {
-        let name, username, password, role, dept_id;
-        if (type === 'categories' || type === 'departments') {
-            name = prompt(`Masukkan nama ${type === 'categories' ? 'kategori' : 'departemen'} baru:`);
-            if (!name) return;
-        } else if (type === 'users') {
-            username = prompt('Masukkan username baru:');
-            if (!username) return;
-            password = prompt('Masukkan password:');
-            name = prompt('Masukkan nama lengkap:');
-            role = prompt('Masukkan role (Admin/User/Guest):', 'User');
-        }
+        let name;
+        name = prompt(`Masukkan nama ${type === 'categories' ? 'kategori' : 'departemen'} baru:`);
+        if (!name) return;
 
         try {
             const res = await fetch(`${API_BASE}/${type}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, username, password, role })
+                body: JSON.stringify({ name })
             });
-            if (res.ok) refreshData();
+            if (res.ok) {
+                if (type === 'categories') fetchCategories();
+                else fetchDepartments();
+            }
         } catch (err) { alert('Gagal menambah data'); }
     }
 
