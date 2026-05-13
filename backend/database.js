@@ -34,12 +34,29 @@ db.exec(`
 
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    role TEXT NOT NULL,
-    department_id INTEGER,
-    FOREIGN KEY (department_id) REFERENCES departments(id)
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    name TEXT,
+    role TEXT
   );
 `);
+
+// Migration check: Ensure users table has username column
+try {
+  db.prepare('SELECT username FROM users LIMIT 1').get();
+} catch (e) {
+  console.log('Migrating users table...');
+  db.exec('DROP TABLE IF EXISTS users');
+  db.exec(`
+    CREATE TABLE users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT UNIQUE NOT NULL,
+      password TEXT NOT NULL,
+      name TEXT,
+      role TEXT
+    )
+  `);
+}
 
 // Seed data function
 const seedData = () => {
@@ -55,10 +72,10 @@ const seedData = () => {
     ['IT Department', 'Finance Department', 'HR Department', 'Operations'].forEach(name => insertDept.run(name));
 
     // Users
-    const insertUser = db.prepare('INSERT INTO users (name, role, department_id) VALUES (?, ?, ?)');
-    insertUser.run('Admin User', 'System Admin', 1);
-    insertUser.run('John Doe', 'Editor', 2);
-    insertUser.run('Jane Smith', 'Viewer', 3);
+    const insertUser = db.prepare('INSERT INTO users (username, password, name, role) VALUES (?, ?, ?, ?)');
+    insertUser.run('admin', 'admin123', 'Admin User', 'System Admin');
+    insertUser.run('john', 'pass123', 'John Doe', 'Editor');
+    insertUser.run('jane', 'pass123', 'Jane Smith', 'Viewer');
 
     // Documents
     const insertDoc = db.prepare('INSERT INTO documents (title, category, status) VALUES (?, ?, ?)');
