@@ -77,10 +77,10 @@ const seedData = () => {
     ['IT Department', 'Finance Department', 'HR Department', 'Operations'].forEach(name => insertDept.run(name));
 
     // Users
-    const insertUser = db.prepare('INSERT INTO users (username, password, name, role) VALUES (?, ?, ?, ?)');
-    insertUser.run('admin', 'admin123', 'Admin User', 'System Admin');
-    insertUser.run('john', 'pass123', 'John Doe', 'Editor');
-    insertUser.run('jane', 'pass123', 'Jane Smith', 'Viewer');
+    const insertUser = db.prepare('INSERT OR IGNORE INTO users (username, password, name, role, department_id) VALUES (?, ?, ?, ?, ?)');
+    insertUser.run('admin', 'admin123', 'Admin User', 'Admin', 1);
+    insertUser.run('john', 'pass123', 'John Doe', 'User', 2);
+    insertUser.run('jane', 'pass123', 'Jane Smith', 'User', 3);
 
     // Documents
     const insertDoc = db.prepare('INSERT INTO documents (title, category, status) VALUES (?, ?, ?)');
