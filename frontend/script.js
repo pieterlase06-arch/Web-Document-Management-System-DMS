@@ -7,10 +7,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentFilter = { text: '', type: 'all' };
 
     // --- Initialization ---
-    initTheme();
-    updateDate();
-    initNavigation();
-    refreshData();
+    try {
+        initTheme();
+        updateDate();
+        initNavigation();
+        refreshData();
+    } catch (e) {
+        console.error('Initialization error:', e);
+    }
 
     // --- Navigation Logic ---
     function initNavigation() {
@@ -86,8 +90,10 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('stat-draft').textContent = data.draft;
             document.getElementById('stat-archived').textContent = data.archived;
 
-            initGrowthChart(); // Static simulation for trend
-            initCategoryChart(data.categories);
+            if (window.Chart) {
+                initGrowthChart(); // Static simulation for trend
+                initCategoryChart(data.categories);
+            }
         } catch (err) {
             console.error('Error fetching stats:', err);
         }
