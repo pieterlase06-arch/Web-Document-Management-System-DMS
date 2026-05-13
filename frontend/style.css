@@ -201,6 +201,12 @@ ul {
     font-family: inherit;
 }
 
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 .icon-btn {
     width: 36px;
     height: 36px;
