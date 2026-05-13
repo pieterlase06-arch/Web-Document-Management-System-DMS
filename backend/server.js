@@ -118,10 +118,17 @@ app.post('/api/chat', async (req, res) => {
       })
     });
 
-    const data = await response.json();
-    res.json(data);
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      const data = await response.json();
+      res.json(data);
+    } else {
+      const text = await response.text();
+      console.error('9Router Error Response:', text);
+      res.status(500).json({ error: '9Router mengembalikan format non-JSON (API Key mungkin salah atau limit tercapai).' });
+    }
   } catch (err) {
-    res.status(500).json({ error: 'Gagal menghubungi 9Router: ' + err.message });
+    res.status(500).json({ error: 'Kesalahan Server: ' + err.message });
   }
 });
 
