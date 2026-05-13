@@ -96,24 +96,28 @@ app.get('/api/activities', (req, res) => {
   }
 });
 
-// Proxy chat request to 9Router (Private)
+// Proxy chat request to AI Provider (Groq, Silicon Flow, etc.)
 app.post('/api/chat', async (req, res) => {
   const { messages } = req.body;
-  const NINEROUTER_KEY = process.env.NINEROUTER_KEY;
+  
+  // Ambil konfigurasi dari Environment Variables
+  const AI_API_KEY = process.env.AI_API_KEY || process.env.NINEROUTER_KEY;
+  const AI_API_URL = process.env.AI_API_URL || 'https://api.groq.com/openai/v1/chat/completions';
+  const AI_MODEL = process.env.AI_MODEL || 'llama3-8b-8192';
 
-  if (!NINEROUTER_KEY || NINEROUTER_KEY === 'GANTI_DENGAN_API_KEY_ANDA_DISINI') {
-    return res.status(500).json({ error: 'API Key belum dikonfigurasi di file .env' });
+  if (!AI_API_KEY) {
+    return res.status(500).json({ error: 'AI_API_KEY belum dikonfigurasi di Hugging Face Secrets.' });
   }
 
   try {
-    const response = await fetch('https://9router.com/v1/chat/completions', {
+    const response = await fetch(AI_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${NINEROUTER_KEY}`
+        'Authorization': `Bearer ${AI_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'vip',
+        model: AI_MODEL,
         messages: messages
       })
     });
@@ -124,11 +128,11 @@ app.post('/api/chat', async (req, res) => {
       res.json(data);
     } else {
       const text = await response.text();
-      console.error('9Router Error Response:', text);
-      res.status(500).json({ error: '9Router mengembalikan format non-JSON (API Key mungkin salah atau limit tercapai).' });
+      console.error('AI Provider Error:', text);
+      res.status(500).json({ error: 'AI Provider mengembalikan format non-JSON. Pastikan URL dan API Key benar.' });
     }
   } catch (err) {
-    res.status(500).json({ error: 'Kesalahan Server: ' + err.message });
+    res.status(500).json({ error: 'Kesalahan Koneksi: ' + err.message });
   }
 });
 
