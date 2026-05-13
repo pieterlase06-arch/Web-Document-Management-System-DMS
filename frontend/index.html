@@ -366,6 +366,26 @@
     </div>
 
     <!-- Chart.js -->
+    <!-- Modal: Master Data (Kategori/Departemen/User) -->
+    <div id="masterModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 id="masterModalTitle">Tambah Data</h2>
+                <button class="icon-btn" onclick="closeMasterModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="masterForm">
+                <input type="hidden" id="masterType">
+                <div id="masterFields">
+                    <!-- Dinamis sesuai tipe -->
+                </div>
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Simpan Data</button>
+                    <button type="button" class="btn" style="flex: 1;" onclick="closeMasterModal()">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>

@@ -581,33 +581,83 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('') || '<tr><td colspan="5" style="text-align:center; padding:1rem;">belum ada pengguna.</td></tr>';
     }
 
-    window.addMasterData = async (type) => {
-        let payload = {};
-        if (type === 'categories' || type === 'departments') {
-            const name = prompt(`Masukkan nama ${type === 'categories' ? 'kategori' : 'departemen'} baru:`);
-            if (!name) return;
-            payload = { name };
-        } else if (type === 'users') {
-            const username = prompt('Username:');
-            if (!username) return;
-            const password = prompt('Password:');
-            const name = prompt('Nama Lengkap:');
-            const role = prompt('Role (Admin/User):', 'User');
-            payload = { username, password, name, role, department_id: 1 }; // Default to IT dept for now
-        }
+    // --- Master Data Management Improved ---
 
-        try {
-            const res = await fetch(`${API_BASE}/${type}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            if (res.ok) {
-                if (type === 'categories') fetchCategories();
-                else if (type === 'departments') fetchDepartments();
-                else fetchUsers();
-            }
-        } catch (err) { alert('Gagal menambah data'); }
+    window.closeMasterModal = () => {
+        document.getElementById('masterModal').classList.remove('active');
+    };
+
+    window.addMasterData = (type) => {
+        const modal = document.getElementById('masterModal');
+        const title = document.getElementById('masterModalTitle');
+        const fields = document.getElementById('masterFields');
+        const typeInput = document.getElementById('masterType');
+
+        typeInput.value = type;
+        modal.classList.add('active');
+        fields.innerHTML = '';
+
+        if (type === 'categories' || type === 'departments') {
+            title.textContent = `Tambah ${type === 'categories' ? 'Kategori' : 'Departemen'}`;
+            fields.innerHTML = `
+                <div class="form-group">
+                    <label>Nama ${type === 'categories' ? 'Kategori' : 'Departemen'}</label>
+                    <input type="text" name="name" class="brutalist-input" required placeholder="Masukkan nama...">
+                </div>
+            `;
+        } else if (type === 'users') {
+            title.textContent = 'Tambah Pengguna Baru';
+            fields.innerHTML = `
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" class="brutalist-input" required placeholder="admin_baru">
+                </div>
+                <div class="form-group" style="margin-top:10px;">
+                    <label>Password</label>
+                    <input type="password" name="password" class="brutalist-input" required placeholder="******">
+                </div>
+                <div class="form-group" style="margin-top:10px;">
+                    <label>Nama Lengkap</label>
+                    <input type="text" name="name" class="brutalist-input" required placeholder="Nama Lengkap">
+                </div>
+                <div class="form-group" style="margin-top:10px;">
+                    <label>Role</label>
+                    <select name="role" class="brutalist-input">
+                        <option value="Admin">Admin</option>
+                        <option value="User">User</option>
+                    </select>
+                </div>
+            `;
+        }
+    };
+
+    const masterForm = document.getElementById('masterForm');
+    if (masterForm) {
+        masterForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(masterForm);
+            const type = document.getElementById('masterType').value;
+            const payload = Object.fromEntries(formData.entries());
+            
+            if (type === 'users') payload.department_id = 1; // Default IT
+
+            try {
+                const res = await fetch(`${API_BASE}/${type}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    closeMasterModal();
+                    if (type === 'categories') fetchCategories();
+                    else if (type === 'departments') fetchDepartments();
+                    else fetchUsers();
+                } else {
+                    alert('Gagal: ' + (data.error || 'Terjadi kesalahan'));
+                }
+            } catch (err) { alert('Gagal menghubungi server'); }
+        };
     }
 
     window.deleteMasterData = async (type, id) => {
