@@ -8,8 +8,30 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="app-container">
+<body class="auth-required">
+    <!-- Login Screen Overlay -->
+    <div id="loginScreen" class="login-overlay">
+        <div class="login-box">
+            <div class="login-header">
+                <i class="fa-solid fa-file-invoice"></i>
+                <h1>DMS <span>Login</span></h1>
+            </div>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label>username</label>
+                    <input type="text" id="username" required placeholder="admin">
+                </div>
+                <div class="input-group">
+                    <label>password</label>
+                    <input type="password" id="password" required placeholder="admin123">
+                </div>
+                <button type="submit" class="btn-login">masuk ke sistem</button>
+            </form>
+            <p class="login-footer">default: admin / admin123</p>
+        </div>
+    </div>
+
+    <div class="app-container" id="appContainer" style="display: none;">
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">

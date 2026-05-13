@@ -9,6 +9,21 @@ const PORT = process.env.PORT || 7860; // Port default Hugging Face adalah 7860
 app.use(cors());
 app.use(express.json());
 
+// --- Authentication ---
+app.post('/api/login', (req, res) => {
+    const { username, password } = req.body;
+    try {
+        const user = db.prepare('SELECT * FROM users WHERE username = ? AND password = ?').get(username, password);
+        if (user) {
+            res.json({ success: true, user: { id: user.id, username: user.username } });
+        } else {
+            res.status(401).json({ error: 'Username atau password salah' });
+        }
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // Melayani file statis dari folder frontend
 app.use(express.static(path.join(__dirname, '../frontend')));
 

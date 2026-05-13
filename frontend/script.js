@@ -1,25 +1,68 @@
 document.addEventListener('DOMContentLoaded', () => {
     // URL API dinamis: Jika di Vercel, arahkan ke Hugging Face. Jika lokal/HF, gunakan path relatif.
-    let API_BASE = '/api';
-    
-    if (window.location.hostname.includes('vercel.app')) {
-        // Updated to match your actual Hugging Face Space URL
-        API_BASE = 'https://pieterlase-dms-app.hf.space/api';
+    const API_BASE = window.location.hostname.includes('vercel.app') 
+        ? 'https://pieterlase-dms-app.hf.space/api' 
+        : '/api';
+
+    // --- Authentication Logic ---
+    const loginScreen = document.getElementById('loginScreen');
+    const appContainer = document.getElementById('appContainer');
+    const loginForm = document.getElementById('loginForm');
+
+    function checkAuth() {
+        const user = localStorage.getItem('dms_user');
+        if (user) {
+            if (loginScreen) loginScreen.style.display = 'none';
+            if (appContainer) appContainer.style.display = 'flex';
+            init(); // Start loading data
+        } else {
+            if (loginScreen) loginScreen.style.display = 'flex';
+            if (appContainer) appContainer.style.display = 'none';
+        }
     }
 
-    // --- State & Charts ---
-    let growthChart, categoryChart;
-    let allDocuments = []; // Local cache for filtering
-    let currentFilter = { text: '', type: 'all' };
+    if (loginForm) {
+        loginForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const res = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    localStorage.setItem('dms_user', JSON.stringify(data.user));
+                    checkAuth();
+                } else {
+                    alert(data.error);
+                }
+            } catch (err) {
+                alert('Gagal menghubungi server');
+            }
+        };
+    }
+
+    window.logout = () => {
+        localStorage.removeItem('dms_user');
+        location.reload();
+    };
+
+    checkAuth();
 
     // --- Initialization ---
-    try {
-        initTheme();
-        updateDate();
-        initNavigation();
-        refreshData();
-    } catch (e) {
-        console.error('Initialization error:', e);
+    function init() {
+        try {
+            initTheme();
+            updateDate();
+            initNavigation();
+            refreshData();
+        } catch (e) {
+            console.error('Initialization error:', e);
+        }
     }
 
     // --- Navigation Logic ---
@@ -83,6 +126,11 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         }
     }
+
+    // --- State & Charts ---
+    let growthChart, categoryChart;
+    let allDocuments = []; // Local cache for filtering
+    let currentFilter = { text: '', type: 'all' };
 
     // --- API Calls ---
 
@@ -320,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </td>
             `;
-            reviewTbody.appendChild(row);
+            tbody.appendChild(row);
         });
     }
 
