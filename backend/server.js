@@ -125,6 +125,11 @@ app.post('/api/chat', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Backend server running at http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`=========================================`);
+  console.log(`  DMS SERVER IS STARTING UP...`);
+  console.log(`  Port: ${PORT}`);
+  console.log(`  Address: 0.0.0.0`);
+  console.log(`  Time: ${new Date().toISOString()}`);
+  console.log(`=========================================`);
 });
