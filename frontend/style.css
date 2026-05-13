@@ -163,7 +163,8 @@ ul {
 /* Main Content */
 .main-content {
     flex: 1;
-    margin-left: 200px; /* Matches new sidebar width */
+    margin-left: 220px; /* Synchronized with sidebar width (220px) */
+    min-width: 0; /* Prevents flex items from overflowing */
 }
 
 .topbar {

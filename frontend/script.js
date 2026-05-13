@@ -224,12 +224,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Modal Add Document
     const addModal = document.getElementById('addModal');
-    const addDocBtn = document.getElementById('addDocBtn');
+    const addDocBtn = document.getElementById('addDocBtnFiles'); // Fixed ID to match index.html
     const closeModal = document.getElementById('closeModal');
     const addDocForm = document.getElementById('addDocForm');
 
-    addDocBtn.onclick = () => addModal.classList.add('active');
-    closeModal.onclick = () => addModal.classList.remove('active');
+    if (addDocBtn) addDocBtn.onclick = () => addModal.classList.add('active');
+    if (closeModal) closeModal.onclick = () => addModal.classList.remove('active');
     
     // Close modal on background click
     addModal.onclick = (e) => { if (e.target === addModal) addModal.classList.remove('active'); };
