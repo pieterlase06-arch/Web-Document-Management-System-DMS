@@ -243,9 +243,18 @@
             <div id="section-categories" class="content-section">
                 <div class="page-header">
                     <h1>master kategori</h1>
+                    <button class="btn btn-primary" onclick="addMasterData('categories')"><i class="fa-solid fa-plus"></i> tambah kategori</button>
                 </div>
-                <div class="grid-3" id="categoriesGrid">
-                    <!-- Data dimuat via script.js -->
+                <div class="content-card">
+                    <table class="document-table">
+                        <thead>
+                            <tr>
+                                <th>nama kategori</th>
+                                <th>aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoriesTableBody"></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -253,9 +262,18 @@
             <div id="section-departments" class="content-section">
                 <div class="page-header">
                     <h1>master departemen</h1>
+                    <button class="btn btn-primary" onclick="addMasterData('departments')"><i class="fa-solid fa-plus"></i> tambah departemen</button>
                 </div>
-                <div id="departmentsList">
-                    <!-- Data dimuat via script.js -->
+                <div class="content-card">
+                    <table class="document-table">
+                        <thead>
+                            <tr>
+                                <th>nama departemen</th>
+                                <th>aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="departmentsTableBody"></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -263,14 +281,17 @@
             <div id="section-users" class="content-section">
                 <div class="page-header">
                     <h1>pengaturan pengguna</h1>
+                    <button class="btn btn-primary" onclick="addMasterData('users')"><i class="fa-solid fa-user-plus"></i> tambah pengguna</button>
                 </div>
                 <div class="content-card">
                     <table class="document-table">
                         <thead>
                             <tr>
+                                <th>username</th>
                                 <th>nama</th>
                                 <th>role</th>
                                 <th>departemen</th>
+                                <th>aksi</th>
                             </tr>
                         </thead>
                         <tbody id="usersTableBody"></tbody>

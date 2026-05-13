@@ -163,6 +163,21 @@ app.get('/api/categories', (req, res) => {
     }
 });
 
+app.post('/api/categories', (req, res) => {
+    const { name } = req.body;
+    try {
+        db.prepare('INSERT INTO categories (name) VALUES (?)').run(name);
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.delete('/api/categories/:id', (req, res) => {
+    try {
+        db.prepare('DELETE FROM categories WHERE id = ?').run(req.params.id);
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 app.get('/api/departments', (req, res) => {
     try {
         const rows = db.prepare('SELECT * FROM departments').all();
@@ -170,6 +185,21 @@ app.get('/api/departments', (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+});
+
+app.post('/api/departments', (req, res) => {
+    const { name } = req.body;
+    try {
+        db.prepare('INSERT INTO departments (name) VALUES (?)').run(name);
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.delete('/api/departments/:id', (req, res) => {
+    try {
+        db.prepare('DELETE FROM departments WHERE id = ?').run(req.params.id);
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.get('/api/users', (req, res) => {
@@ -183,6 +213,21 @@ app.get('/api/users', (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+});
+
+app.post('/api/users', (req, res) => {
+    const { username, password, name, role, department_id } = req.body;
+    try {
+        db.prepare('INSERT INTO users (username, password, name, role, department_id) VALUES (?, ?, ?, ?, ?)').run(username, password, name, role, department_id);
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.delete('/api/users/:id', (req, res) => {
+    try {
+        db.prepare('DELETE FROM users WHERE id = ?').run(req.params.id);
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.listen(PORT, '0.0.0.0', () => {
