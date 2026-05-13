@@ -123,6 +123,7 @@ app.post('/api/chat', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'Gagal menghubungi 9Router: ' + err.message });
   }
+});
 
 // --- Master Data Endpoints ---
 
